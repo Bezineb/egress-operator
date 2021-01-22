@@ -38,6 +38,8 @@ type ExternalServiceReconciler struct {
 	client.Client
 	Log    logr.Logger
 	Scheme *runtime.Scheme
+
+	EnvoyImage string
 }
 
 // +kubebuilder:rbac:groups=egress.monzo.com,resources=externalservices,verbs=get;list;watch;create;update;patch;delete

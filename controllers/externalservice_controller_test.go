@@ -145,9 +145,9 @@ func assertState(key types.NamespacedName, es *v1.ExternalService) {
 
 		return d
 	}, timeout, interval).Should(And(
-		WithTransform(func(d *appsv1.Deployment) appsv1.DeploymentSpec { return d.Spec }, Equal(deployment(es, cHash).Spec)),
+		WithTransform(func(d *appsv1.Deployment) appsv1.DeploymentSpec { return d.Spec }, Equal(deployment(es, "TEST-IMAGE:latest", cHash).Spec)),
 		assertOwner(key.Name),
-		assertLabels(deployment(es, cHash)),
+		assertLabels(deployment(es, "TEST-IMAGE:latest", cHash)),
 	))
 
 	Eventually(func() *networkingv1.NetworkPolicy {

@@ -18,8 +18,11 @@ import (
 
 // +kubebuilder:rbac:namespace=egress-operator-system,groups=apps,resources=deployments,verbs=get;list;watch;create;patch
 
+// DefaultEnvoyImage is the name of the docker image to use a the envoy gateway if nothing else is specified
+const DefaultEnvoyImage = "envoyproxy/envoy-alpine:v1.12.2"
+
 func (r *ExternalServiceReconciler) reconcileDeployment(ctx context.Context, req ctrl.Request, es *egressv1.ExternalService, configHash string) error {
-	desired := deployment(es, configHash)
+	desired := deployment(es, r.EnvoyImage, configHash)
 	if err := ctrl.SetControllerReference(es, desired, r.Scheme); err != nil {
 		return err
 	}
@@ -58,7 +61,7 @@ func deploymentPorts(es *egressv1.ExternalService) (ports []corev1.ContainerPort
 	return
 }
 
-func deployment(es *egressv1.ExternalService, configHash string) *appsv1.Deployment {
+func deployment(es *egressv1.ExternalService, envoyImage string, configHash string) *appsv1.Deployment {
 	adPort := adminPort(es)
 	a := annotations(es)
 	a["egress.monzo.com/config-hash"] = configHash
@@ -106,9 +109,8 @@ func deployment(es *egressv1.ExternalService, configHash string) *appsv1.Deploym
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{
 						{
-							Name: "gateway",
-							// TODO this version doesn't actually support UDP, we need 1.13 which isn't stable
-							Image:           "envoyproxy/envoy-alpine:v1.12.2",
+							Name:            "gateway",
+							Image:           envoyImage,
 							ImagePullPolicy: corev1.PullIfNotPresent,
 							Ports:           deploymentPorts(es),
 							VolumeMounts: []corev1.VolumeMount{
@@ -142,6 +144,9 @@ func deployment(es *egressv1.ExternalService, configHash string) *appsv1.Deploym
 								TimeoutSeconds:   1,
 							},
 							Resources: resources,
+							SecurityContext: &corev1.SecurityContext{
+								ReadOnlyRootFilesystem: proto.Bool(true),
+							},
 						},
 					},
 					RestartPolicy:                 corev1.RestartPolicyAlways,

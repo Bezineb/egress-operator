@@ -60,4 +60,6 @@ spec:
           requests:
             cpu: 100m
             memory: 20Mi
+        securityContext:
+          readOnlyRootFilesystem: true
       terminationGracePeriodSeconds: 10
