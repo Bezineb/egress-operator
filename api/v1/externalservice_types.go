@@ -31,6 +31,8 @@ type ExternalServiceSpec struct {
 	// DnsName is a DNS name target for the external service
 	DnsName string `json:"dnsName,omitempty"`
 
+	OptionalLabels []ExternalServiceLabel `json:"optionalLabels,omitempty"`
+
 	// Ports is a list of ports on which the external service may be called
 	Ports []ExternalServicePort `json:"ports,omitempty"`
 
@@ -53,6 +55,15 @@ type ExternalServiceSpec struct {
 	// If true, add a `egress.monzo.com/hijack-dns: true` label to produced Service objects
 	// CoreDNS can watch this label and decide to rewrite DnsName -> clusterIP
 	HijackDns bool `json:"hijackDns,omitempty"`
+}
+
+type ExternalServiceLabel struct {
+	// The name of the label
+	// +optional
+	Name string `json:"label,omitempty"`
+
+	// The value on the given label.
+	Value string `json:"value,omitempty"`
 }
 
 type ExternalServicePort struct {

@@ -93,10 +93,16 @@ func (r *ExternalServiceReconciler) Reconcile(req ctrl.Request) (ctrl.Result, er
 }
 
 func labels(es *egressv1.ExternalService) map[string]string {
-	return map[string]string{
+	labelMap := map[string]string{
 		"app":                      "egress-gateway",
 		"egress.monzo.com/gateway": es.Name,
 	}
+
+	for _, label := range es.Spec.OptionalLabels {
+		labelMap[label.Name] = label.Value
+	}
+
+	return labelMap
 }
 
 func annotations(es *egressv1.ExternalService) map[string]string {

@@ -61,4 +61,10 @@ spec:
             memory: 20Mi
         securityContext:
           readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
       terminationGracePeriodSeconds: 10
+      volumes:
+      - name: tmp
+        emptyDir: {}
