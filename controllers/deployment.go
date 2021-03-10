@@ -107,6 +107,27 @@ func deployment(es *egressv1.ExternalService, envoyImage string, configHash stri
 					Annotations: a,
 				},
 				Spec: corev1.PodSpec{
+					Affinity: &corev1.Affinity{
+						PodAntiAffinity: &corev1.PodAntiAffinity{
+							PreferredDuringSchedulingIgnoredDuringExecution: []corev1.WeightedPodAffinityTerm{
+								{
+									Weight: 100,
+									PodAffinityTerm: corev1.PodAffinityTerm{
+										LabelSelector: &metav1.LabelSelector{
+											MatchExpressions: []metav1.LabelSelectorRequirement{
+												{
+													Key:      "app",
+													Operator: metav1.LabelSelectorOpIn,
+													Values:   []string{"egress-gateway"},
+												},
+											},
+										},
+										TopologyKey: "topology.kubernetes.io/region",
+									},
+								},
+							},
+						},
+					},
 					Containers: []corev1.Container{
 						{
 							Name:            "gateway",
