@@ -7,6 +7,7 @@ import (
 
 	"github.com/coredns/coredns/plugin"
 	"github.com/coredns/coredns/plugin/rewrite"
+	"github.com/monzo/egress-operator/controllers"
 	api "k8s.io/api/core/v1"
 	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -83,7 +84,7 @@ func newdnsController(kubeClient kubernetes.Interface, namespace, zone string, r
 	}, cache.MetaNamespaceKeyFunc)
 
 	s := labels.SelectorFromSet(map[string]string{
-		"app":                         "egress-gateway",
+		"app":                         controllers.EgressLabel,
 		"egress.monzo.com/hijack-dns": "true",
 	})
 

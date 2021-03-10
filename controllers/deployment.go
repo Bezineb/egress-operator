@@ -118,7 +118,7 @@ func deployment(es *egressv1.ExternalService, envoyImage string, configHash stri
 												{
 													Key:      "app",
 													Operator: metav1.LabelSelectorOpIn,
-													Values:   []string{"egress-gateway"},
+													Values:   []string{EgressLabel},
 												},
 											},
 										},
