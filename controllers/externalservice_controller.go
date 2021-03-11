@@ -33,6 +33,9 @@ import (
 
 const namespace = "egress-operator-system"
 
+// EgressLabel constant used to create a label for Kubernetes objects
+const EgressLabel = "egress-gateway"
+
 // ExternalServiceReconciler reconciles a ExternalService object
 type ExternalServiceReconciler struct {
 	client.Client
@@ -94,7 +97,7 @@ func (r *ExternalServiceReconciler) Reconcile(req ctrl.Request) (ctrl.Result, er
 
 func labels(es *egressv1.ExternalService) map[string]string {
 	labelMap := map[string]string{
-		"app":                      "egress-gateway",
+		"app":                      EgressLabel,
 		"egress.monzo.com/gateway": es.Name,
 	}
 
